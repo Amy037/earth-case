@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-    
+
 <head>
 <meta charset="utf-8">
 <title>HEII velkommen</title>
@@ -14,7 +14,7 @@
 <body>
 <div id='map' style='width: 400px; height: 300px;'></div>
 <script>
-  mapboxgl.accessToken = 'pk.eyJ1IjoiYW15MDM3IiwiYSI6ImNsNThmMzRsbzBvd2szam5zdzNlMHV2N2YifQ.miWxlLJpkts2hxpNw8zXTg';
+  mapboxgl.accessToken = API_KEY;
   var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/light-v10'+
@@ -34,7 +34,7 @@ body { margin: 0; padding: 0; }
 <body>
 <div id="map"></div>
 <script>
-	mapboxgl.accessToken = 'pk.eyJ1IjoiYW15MDM3IiwiYSI6ImNsNThmMzRsbzBvd2szam5zdzNlMHV2N2YifQ.miWxlLJpkts2hxpNw8zXTg';
+	mapboxgl.accessToken = API_KEY;
     const map = new mapboxgl.Map({
         container: 'map', // container ID
         style: 'mapbox://styles/mapbox/streets-v11', // style URL
