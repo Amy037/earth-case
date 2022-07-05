@@ -14,5 +14,4 @@ Funksjoner js, design css
   - What problems does the application solve?
   - How do you build the application?
   - How do you run the application?
-  
 */
