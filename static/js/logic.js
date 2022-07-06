@@ -1,54 +1,63 @@
-//kæsher data fra url
+// Henter data fra usgs' API og map'et
 earthquakesUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson"
+platesUrl = "static/data/PB2002_boundaries.json"
 
-// The following geoJSON gives layers of plate boundaries, geometry "LineString"
-//platesUrl = "static/data/PB2002_boundaries.json" 
+//PB2002_boundaries er hentet fra https://github.com/fraxen/tectonicplates/blob/master/GeoJSON/PB2002_boundaries.json
 
-// https://github.com/fraxen/tectonicplates/blob/master/GeoJSON/PB2002_boundaries.json
-
+// Bestemmer fargen på merkene basert på omfaget av jordskjelvet
 
 function getColor(mag) { //kode2
-    let color = '';
-    if (mag < 1) {
-      color = '#1a9850';
-    } else if (mag < 2) {
-      color = '#91cf60';
-    } else if (mag < 3) {
-      color = '#d9ef8b';
-    } else if (mag < 4) {
-      color = '#fee08b';
-    } else if (mag < 5) {
-      color = '#fc8d59';
-    } else { // magnitude 5+
-      color = '#d73027';
-    }
-    return color
-    }
-// Declare function to create features
-function createFeatures(earthquakeData) {
-    // pupup
+let color = '';
+if (mag < 1) {
+  color = '#1a9850';
+} else if (mag < 2) {
+  color = '#91cf60';
+} else if (mag < 3) {
+  color = '#d9ef8b';
+} else if (mag < 4) {
+  color = '#fee08b';
+} else if (mag < 5) {
+  color = '#fc8d59';
+} else { // magnitude 5+
+  color = '#d73027';
+}
+return color
+}
+
+// Declare function to create map features based on two inputs
+function createFeatures(earthquakeData, platesData) {
+    // Create popup layers using earthquake title, type and magnitude
     function onEachFeature(feature, layer) {
         layer.bindPopup("<p>" + feature.properties.title + "</p>" +
             "<p>Type: " + feature.properties.type + "</p>" +
             "<p>Magnitude: " + feature.properties.mag + "</p>");
     }
-    //pins
+     //pins
     var earthquakes = L.geoJSON(earthquakeData, {
         pointToLayer: function(feature, latlng) {
-            // strl magnitude
+            // Make circle radius dependent on the magnitude and get color based on the same feature
             return new L.CircleMarker(latlng, {
                 radius: feature.properties.mag * 5,
-                fillOpacity: 1,
+                fillOpacity: 0.7,
                 color: getColor(feature.properties.mag)
             })
         },
-        // Appender popups
+        // Append popups on each feature
         onEachFeature: onEachFeature
     });
-
-    createMap(earthquakes);
-};
-
+    // Shade plates boundaries
+    var plates = L.geoJSON(platesData, {
+        style: function() {
+            return {
+                color: "orange",
+                weight: 1.5
+            }
+        }
+    });
+    // Call create map function using the earthquakes and plates data
+    createMap(earthquakes, plates);
+}; 
+ 
 // Declare function to create map
 function createMap(earthquakes, plates) {
     // Declare map layers
@@ -86,38 +95,41 @@ function createMap(earthquakes, plates) {
         Outdoors: outdoors,
         Satellite: satellite
     };
-
+    // Declare data layers to be chosen from
     var overlayMaps = {
-        "Earthquakes": earthquakes
+        "Earthquakes": earthquakes,
+        "Fault Lines": plates
     }
-
+    // Declare map object and set it to the map element in the DOM
     var myMap = L.map("map", {
         center: [29.876019, -107.224121],
         zoom: 4.5,
-        layers: [mapLayer, earthquakes]
+        // Set default layers
+        layers: [satellite, earthquakes, plates]
     });
+
 
     // Create a legend for the map based on the earthquakes data and colors
     var legend = L.control({position: "bottomright"});
     legend.onAdd = function() {
         var div = L.DomUtil.create("div", "info legend");
         var colors = [
-            "rgb(183, 243, 77)",
-            "rgb(226, 243, 77)",
-            "rgb(243, 219, 77)",
-            "rgb(243, 186, 77)",
-            "rgb(240, 167, 107)",
-            "rgb(240, 107, 107)"];
+            '#1a9850',
+            '#91cf60',
+            '#d9ef8b',
+            '#fee08b',
+            '#fc8d59',
+            '#d73027'];
         var labels = [];
 
-        var legendInfo = "<h1>Earthquake intensity<h1>" + 
+        var legendInfo = "<h2>Earthquake intensity<h2>" + 
             "<div class=\"labels\">" +
                 "<div class=\"max\">5+</div>" +
                 "<div class=\"fourth\">4-5</div>" +
                 "<div class=\"third\">3-4</div>" +
                 "<div class=\"second\">2-3</div>" +
                 "<div class=\"first\">1-2</div>" +
-                "<div class=\"min\">0-1</div>" +
+                "<div class=\"min\">0-1</div>"
             "</div>";
 
         div.innerHTML = legendInfo;
@@ -131,18 +143,84 @@ function createMap(earthquakes, plates) {
     };
     // Append label to the map
     legend.addTo(myMap);
-
+    L.control.layers(baseMaps, overlayMaps).addTo(myMap);
 };
 
-d3.json(earthquakesUrl, function(data) {
-    // Create features with the earthquakes data
-    createFeatures(data.features)
+// Get earthquakes data
+d3.json(earthquakesUrl, function(earthquakeData) {
+    // Get plates data
+    d3.json(platesUrl, function(platesData) {
+        // Create features with the earthquakes and the plates data
+        createFeatures(earthquakeData.features, platesData.features)
+    });
 });
 
 /* d3.json(platesUrl, function(platesData) {
     createFeatures(data.features)
 }); */
 
-/* d3.json(platesUrl, function (platesData) {
-    console.log(platesData);
-    createFeatures(earthquakeData.features, platesData.features); */
+
+
+
+
+//trying to clear map for autorefresh
+/* function clearMap() {
+    map.eachLayer(function(layer){
+        if(layer.myTag && layer.myTag === 'previousLayer'){
+            myMap.removeLayer(layer);
+        }
+    });
+}
+function geojsonUpdate(earthquakeData){
+ var geojsonLayer = L.geoJson(earthquakeData, {
+    onEachFeature: function (feature, layer) {
+        layer.myTag = 'previousLayer'
+    
+    },
+  });
+  
+ geojsonLayer.addTo(myMap);
+ lmap.fitBounds(geojsonLayer.getBounds());
+}
+
+//function call
+clearMap();
+geojsonUpdate(earthquakeData); 
+ */
+
+
+//AJAX!!
+//var geojsonLayer = new L.GeoJSON.AJAX("earthquakeData");
+
+//forsøk1000
+/* var geojsonLayer = L.geoJson.ajax(earthquakesUrl,{
+        middleware:function(earthquakeData){
+            return blablabla(blabla);
+        }
+    });
+
+var geojsonLayer = L.geoJson.ajax("map");
+geojsonLayer.addUrl("earthquakesUrl");
+geojsonLayer.refresh();
+geojsonLayer.refresh("earthquake.json");
+
+var geojsonLayer = L.geoJson.ajax("data.json");
+geojsonLayer.refilter(function(feature){
+    return feature.properties.key === values;
+});
+ */
+
+
+//trying to count number of earthquakes-instances, 
+//so i can later display a little hourly-counter-thingy on the webpage
+/* function getCount(arr, earthquakes) {
+    var count = 0;
+    for (var i = 0; i < arr.length; i++) {
+        if (arr[i].earthquakes == earthquakes) {
+            count++;
+        }
+    }
+    return count;
+}
+
+getCount(earthquakesUrl.earthquakeData, 1); */

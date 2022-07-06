@@ -2,6 +2,8 @@ body {
     padding: 0;
     margin: 0;
     
+
+    
   }
   
   #map,
@@ -22,9 +24,9 @@ body {
     font: 12px Arial, Helvetica, sans-serif;
     font-weight: bold;
     color: rgb(206, 206, 206);
-    background: #fff;
+
     background: rgba(68, 68, 68, 0.8);
-    border-radius: 5px;
+    border-radius: 2px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
   }
   
@@ -77,9 +79,48 @@ body {
     font-size: 15px;
   }
 
-  
+  h1 {
+    text-align: center;
+    height: 95%;
+    width: 95%;
+    padding: 6px 8px;
+    font-size: 54px;
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    line-height: 50px; 
+    margin: 0 0 20px;
+    color: #adb7bd;
+}
+
+  p {
+    text-align: center;
+    height: 95%;
+    width: 95%;
+    padding: 6px 8px;
+    font-size: 20px;
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    line-height: 20px; 
+    margin: 0 0 58px;
+    color: #adb7bd;
+  }
+
+  a {
+    text-align: center;
+    height: 95%;
+    width: 95%;
+    padding: 6px 8px;
+    font-size: 20px;
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    line-height: 20px; 
+    margin: 0 0 58px;
+    color: #adb7bd;
+  }
+
   #map {
     width: 800px;
+    height: 550px;
     margin-left: auto;
     margin-right: auto;
   }
