@@ -1,12 +1,9 @@
-// Henter data fra usgs' API og map'et
+// Query data for both the earthquakes and the plates
 earthquakesUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson"
 platesUrl = "static/data/PB2002_boundaries.json"
 
-//PB2002_boundaries er hentet fra https://github.com/fraxen/tectonicplates/blob/master/GeoJSON/PB2002_boundaries.json
-
-// Bestemmer fargen på merkene basert på omfaget av jordskjelvet
-
-function getColor(mag) { //kode2
+// Sets color dependent on the magnitude of the earthquake
+function getColor(mag) { 
 let color = '';
 if (mag < 1) {
   color = '#1a9850';
@@ -154,73 +151,3 @@ d3.json(earthquakesUrl, function(earthquakeData) {
         createFeatures(earthquakeData.features, platesData.features)
     });
 });
-
-/* d3.json(platesUrl, function(platesData) {
-    createFeatures(data.features)
-}); */
-
-
-
-
-
-//trying to clear map for autorefresh
-/* function clearMap() {
-    map.eachLayer(function(layer){
-        if(layer.myTag && layer.myTag === 'previousLayer'){
-            myMap.removeLayer(layer);
-        }
-    });
-}
-function geojsonUpdate(earthquakeData){
- var geojsonLayer = L.geoJson(earthquakeData, {
-    onEachFeature: function (feature, layer) {
-        layer.myTag = 'previousLayer'
-    
-    },
-  });
-  
- geojsonLayer.addTo(myMap);
- lmap.fitBounds(geojsonLayer.getBounds());
-}
-
-//function call
-clearMap();
-geojsonUpdate(earthquakeData); 
- */
-
-
-//AJAX!!
-//var geojsonLayer = new L.GeoJSON.AJAX("earthquakeData");
-
-//forsøk1000
-/* var geojsonLayer = L.geoJson.ajax(earthquakesUrl,{
-        middleware:function(earthquakeData){
-            return blablabla(blabla);
-        }
-    });
-
-var geojsonLayer = L.geoJson.ajax("map");
-geojsonLayer.addUrl("earthquakesUrl");
-geojsonLayer.refresh();
-geojsonLayer.refresh("earthquake.json");
-
-var geojsonLayer = L.geoJson.ajax("data.json");
-geojsonLayer.refilter(function(feature){
-    return feature.properties.key === values;
-});
- */
-
-
-//trying to count number of earthquakes-instances, 
-//so i can later display a little hourly-counter-thingy on the webpage
-/* function getCount(arr, earthquakes) {
-    var count = 0;
-    for (var i = 0; i < arr.length; i++) {
-        if (arr[i].earthquakes == earthquakes) {
-            count++;
-        }
-    }
-    return count;
-}
-
-getCount(earthquakesUrl.earthquakeData, 1); */
