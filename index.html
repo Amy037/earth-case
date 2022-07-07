@@ -41,24 +41,11 @@
   <!-- D3 JavaScript -->
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.3/d3.min.js"></script>
 
-<!--   <script>
-    var previous = null;
-    var current = null;
-    setInterval(function() {
-        $.getJSON("map", function(earthquakeData) {
-            current = JSON.stringify(earthquakeData);            
-            if (previous && current && previous !== current) {
-                console.log('refresh');
-                location.reload();
-            }
-            previous = current;
-        });                       
-    }, 2000);   
-</script> -->
+
 
 <script>
-    window.setInterval('refresh()', 10000); 	
-    // Call a function every 10 seconds 
+    window.setInterval('refresh()', 180000); 	
+    // Call function every 3 minutes 
     // Refresh or reload page.
     function refresh() {
         window .location.reload();
